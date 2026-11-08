@@ -1,0 +1,3 @@
+# Exclude package managers' config
+composer.lock export-ignore
+package-lock.json export-ignore

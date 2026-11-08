@@ -1,0 +1,17 @@
+{
+  "name": "TMW.DEV",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "wordpress",
+  "workspaceFolder": "/var/www/html/wp-content/themes/${localWorkspaceFolderBasename}",
+  "remoteUser": "www-data",
+  "remoteEnv": {
+    "VSCODE_SERVER_HOME": "/home/www-data/.vscode-server"
+  },
+  "mounts": [
+    "source=${localWorkspaceFolder},target=/var/www/html/wp-content/themes/${localWorkspaceFolderBasename},type=bind,consistency=cached",
+    "source=${localWorkspaceFolder}/.devcontainer/keys,target=/home/www-data/keys,type=bind,consistency=cached"
+  ],
+  "postCreateCommand": "set -x && cd /var/www/html/wp-content/themes/${localWorkspaceFolderBasename} && sleep 5 && composer dump-autoload && sleep 5 && wp meros:install framework --required-only --surpress-env-error",
+  "forwardPorts": [8003,9003,1028,8028],
+  "features": {}
+}

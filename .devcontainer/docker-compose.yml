@@ -1,0 +1,54 @@
+services:
+  db:
+    image: docker.io/mariadb:10.11
+    container_name: ${THEME_SLUG:-meros-wp}_dev_db
+    environment:
+      MARIADB_DATABASE: ${DB_NAME:-wordpress}
+      MARIADB_USER: ${DB_USER:-dbuser}
+      MARIADB_PASSWORD: ${DB_PASSWORD:-dbpassword}
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-rootpassword}
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mariadb-admin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  wordpress:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        USER_UID: ${LOCAL_USER_ID:-1000}
+        USER_GID: ${LOCAL_GROUP_ID:-1000}
+    container_name: ${THEME_SLUG:-meros-wp}_dev_wordpress
+    ports:
+      - ${WP_PORT:-8000}:8080
+    depends_on:
+      db:
+        condition: service_healthy
+      mailpit:
+        condition: service_started
+
+  phpmyadmin:
+    image: docker.io/phpmyadmin
+    container_name: ${THEME_SLUG:-meros-wp}_dev_phpmyadmin
+    ports:
+      - ${PHPMYADMIN_PORT:-9000}:80
+    environment:
+      PMA_HOST: db
+
+  mailpit:
+    image: docker.io/axllent/mailpit:latest
+    container_name: ${THEME_SLUG:-meros-wp}_dev_mailpit
+    ports:
+      - ${MAILPIT_SMTP_PORT:-1025}:${MAILPIT_SMTP_PORT:-1025}
+      - ${MAILPIT_UI_PORT:-8025}:${MAILPIT_UI_PORT:-8025}
+    environment:
+      MP_SMTP_BIND_ADDR: 0.0.0.0:${MAILPIT_SMTP_PORT:-1025}
+      MP_UI_BIND_ADDR: 0.0.0.0:${MAILPIT_UI_PORT:-8025}
+      MP_WEBROOT: /mailpit/
+
+volumes:
+  db_data:

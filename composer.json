@@ -1,0 +1,41 @@
+{
+    "$schema": "https://getcomposer.org/schema.json",
+    "name": "mirror-and-mountain/meros",
+    "description": "A block-based starter theme for Wordpress using the Meros Framework",
+    "type": "project",
+    "license": "MIT",
+     "keywords": [
+        "meros",
+        "wordpress",
+        "acorn",
+        "laravel",
+        "livewire"
+    ],
+    "authors": [
+        {
+            "name": "tmw-mm",
+            "email": "toby@mirrorandmountain.com"
+        }
+    ],
+    "require": {
+        "mirror-and-mountain/meros-framework": "^0.2.18",
+        "mirror-and-mountain/meros-crm": "^0.1.2",
+        "mirror-and-mountain/meros-blocks": "^0.1.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app"
+        }
+    },
+    "scripts": {
+        "post-create-project-cmd": [
+            "MM\\Meros\\Scripts\\ComposerScripts::postCreateProjectCmd"
+        ],
+        "post-autoload-dump": [
+            "Roots\\Acorn\\ComposerScripts::postAutoloadDump",
+            "MM\\Meros\\Scripts\\ComposerScripts::postAutoloadDump"
+        ]
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
